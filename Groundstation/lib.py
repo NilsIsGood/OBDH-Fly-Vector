@@ -1,3 +1,11 @@
+def loadMIB():
+    """
+    1.1.0.0 Load MIB.
+    Loads the MIB (Management Information Base) for the ground station.
+    This function reads the MIB file and initializes the necessary data structures.
+    """
+    # Implementation for loading MIB goes here
+
 def startGroundTime():
     """
     Starts the ground time for the ground station.
