@@ -12,6 +12,12 @@ def startGroundTime():
     _ground_time = time.monotonic()
     _wall_time = time.time()
 
+def _now() -> float:
+    """
+    Monotonic ground elapsed time (s); immune to wall-clock jumps.
+    """
+    return time.monotonic() - _ground_time
+
 def loadMIB():
     """
     Loads the MIB (Management Information Base) for the ground station.
