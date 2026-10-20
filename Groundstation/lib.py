@@ -1,5 +1,8 @@
 import time
 
+
+EXIT_WORDS = {"exit", "quit", "q"}
+
 """
 INITIALISATION
 """
