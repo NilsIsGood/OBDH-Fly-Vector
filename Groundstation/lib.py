@@ -97,14 +97,12 @@ def createTC(name):
    seq = handleSequenceCount() 
    
 
-def timestampCommand(telecommand):
+def timestampCommand(tc):
     """
-    2.4.0.0 Timestamp Command.
     Applies a timestamp to the telecommand using the ground time.
-    This function records when the command was created or released for transmission.
     """
-    # Implementation for timestamping a command goes here
-    pass
+    tc["t_ground"] = _now()
+    return tc
 
 
 def displayResponse(response):
