@@ -158,22 +158,26 @@ DOWNLINK
 
 def receiveTelemetry():
     """
-    4.1.0 Receive Telemetry.
     Receives raw telemetry from the communications interface.
-    This function reads incoming frames or packets and returns them for processing.
+    This function reads incoming packets and return one raw 
+    TM packet, or None. Non-blocking.
     """
-    # Implementation for receiving telemetry goes here
-    pass
+    try:
+        return _downlink_q.get_nowait()
+    except queue.Empty:
+        return None
  
  
-def checkTelemetry(telemetry):
+def checkTelemetry(raw_tm):
     """
-    4.2.0 Check Telemetry.
-    Validates received telemetry.
-    This function checks packet integrity (length, checksum, sequence) and decodes it using the MIB.
+    Validates received telemetry via
+    Parse + CRC-check. Returns a dict or None if invalid.
     """
-    # Implementation for checking telemetry goes here
-    pass
+    try:
+        return _parse_packet(raw_tm)
+    except ValueError as e:
+        print(f"[ERR] bad TM: {e}")
+        return None
  
  
 def timestampTelemetry(telemetry):
