@@ -180,32 +180,37 @@ def checkTelemetry(raw_tm):
         return None
  
  
-def timestampTelemetry(telemetry):
+def timestampTelemetry(tm):
     """
-    4.3.0 Timestamp Telemetry.
-    Applies a ground reception timestamp to the telemetry.
     This function records the ground time at which the telemetry was received.
     """
-    # Implementation for timestamping telemetry goes here
-    pass
+    tm["t_ground"] = _now()
+    return tm
  
  
-def displayTelemetry(telemetry):
+def displayTelemetry(tm):
     """
     4.4.0 Display Telemetry.
     Displays telemetry on the console.
     This function formats the decoded parameters for the operator.
     """
-    # Implementation for displaying telemetry goes here
-    pass
+    print(f"[TM  {tm['t_ground']:9.3f}] apid={tm['apid']}"
+          f"S{tm['service']},{tm['subservice']} payload={tm['payload'].hex()}")
+
+    # PUS (1,1) acceptance report: clear the pending TC
+    if (tm["service"], tm["subservice"]) == (1, 1):
+        seq = struct.unpack(">H", tm["payload"][:2])[0]
+        name, _ = _pending.pop(seq, ("?", 0))
+        displayResponse(f"ACK received for '{name}' (seq {seq})")
  
  
-def logTelemetry(telemetry):
+def logTelemetry(tm, path="tm_log.csv"):
     """
     4.5.0 Log Telemetry.
     Writes telemetry to the log.
     This function stores the timestamped telemetry so it can be reviewed or replayed later.
     """
-    # Implementation for logging telemetry goes here
-    pass
+    with open(path, "a") as f:
+        f.write(f"{tm['t_ground']:.3f},{tm['apid']},{tm['service']},"
+                f"{tm['subservice']},{tm['payload'].hex()}\n")
  
