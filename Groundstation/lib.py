@@ -1,7 +1,17 @@
 import time
-
+import json
 
 EXIT_WORDS = {"exit", "quit", "q"}
+"""
+GLOBALS
+"""
+_mib = {}
+
+DEFAULT_MIB = {
+    "Example Telecommand": {},
+    "Ping": {},
+    "Set Mode Safe": {},
+}
 
 """
 INITIALISATION
@@ -21,13 +31,15 @@ def _now() -> float:
     """
     return time.monotonic() - _ground_time
 
-def loadMIB():
-    """
-    Loads the MIB (Management Information Base) for the ground station.
-    This function reads the MIB file and initializes the necessary data structures.
-    """
-    # Implementation for loading MIB goes here
-    pass
+def loadMIB(path="mib.json"):
+    """Load the Mission Information Base (telecommand definitions)."""
+    global _mib
+    try:
+        with open(path) as f:
+            _mib = json.load(f)
+    except FileNotFoundError:
+        _mib = dict(DEFAULT_MIB)
+        print(f"[MIB] {path} not found, using built-in defaults ({len(_mib)} commands)")
 
 def startComms():
     """
