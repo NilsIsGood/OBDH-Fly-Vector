@@ -3,6 +3,8 @@ import json
 import queue
 import sys
 import struct
+import socket
+import threading
 
 """
 GLOBALS
@@ -15,6 +17,9 @@ _uplink_q = queue.Queue()    # ground -> platform
 _downlink_q = queue.Queue()  # platform -> ground
 _stdin_q = queue.Queue()     # operators input
 RESPONSE_TIMEOUT_S = 5.0     # 5 secs timeout
+HOST = '...'                  # Host address for communications (IP adress for arduino)
+PORT = ...                    # Port number for communications (port for arduino)
+_sock = None                  # Socket for communications
 
 
 DEFAULT_MIB = {
@@ -58,8 +63,53 @@ def startComms():
     Starts the communications for the ground station.
     This function initializes the communication interfaces and prepares them for data transmission.
     """
-    # Implementation for starting communications goes here
-    pass
+    global _sock
+    print(f"[GND] Connecting to OBC at {HOST}:{PORT}")
+
+    _sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        _sock.connect((HOST, PORT))
+        print(f"[GND] Connected to Platform OBC successfully!")
+
+        # Start a thread to handle incoming telemetry data
+        rx_thread = threading.Thread(target=_socket_reciever_worker, daemon=True)
+        rx_thread.start()
+
+        stdin_thread = threading.Thread(target=_stdin_reader_worker, daemon=True)
+        stdin_thread.start()
+
+    except ConnectionRefusedError:
+        print(f"[GND] Connection refused. Please check the connection and try again.")
+        sys.exit(1)
+
+def _socket_reciever_worker():
+    """
+    Worker thread to receive telemetry data from the socket.
+    This function continuously listens for incoming telemetry data and processes it.
+    """
+    while True:
+        try:
+            data = _sock.recv(1024)  # Received data from the socket
+            if not data:
+                print("[GND] Connection closed by the OBC.")
+                break
+            
+            _downlink_q.put(data)  # Put the received data into the downlink queue for processing
+        except Exception as e:
+            print(f"[GND] Error receiving telemetry: {e}")
+            break
+
+def _stdin_reader_worker():
+    """
+    Worker thread to read from standard input and put lines into the queue.
+    This function runs in a separate thread and continuously reads operator input.
+    """
+    while True:
+        line = sys.stdin.readline()
+        if line:
+            _stdin_q.put(line)
+
 
 """
 CONSOLE
