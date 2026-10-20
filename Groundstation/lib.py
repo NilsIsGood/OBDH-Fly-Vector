@@ -106,9 +106,7 @@ def displayResponse(response):
     Displays the response to a command on the console.
     This function formats the response (acknowledgement, rejection or timeout) for the operator.
     """
-    # Implementation for displaying a response goes here 
-    # maybe this isnt neccesary?
-    pass
+    print(f"[GND {_now():9.3f}] {response}")
 
 """
 UPLINK
