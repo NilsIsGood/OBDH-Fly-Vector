@@ -2,12 +2,17 @@ import time
 import json
 import queue
 import sys
+import struct
 
 """
 GLOBALS
 """
 EXIT_WORDS = {"exit", "quit", "q"}
 _mib = {}
+_seq_count = 0
+_pending = {}            # seq_count -> (command name, time sent)
+_uplink_q = queue.Queue()    # ground -> platform 
+_downlink_q = queue.Queue()  # platform -> ground
 _stdin_q = queue.Queue()     # operators input
 
 
