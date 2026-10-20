@@ -1,12 +1,14 @@
 import time
 import json
-
+import queue
 
 """
 GLOBALS
 """
 EXIT_WORDS = {"exit", "quit", "q"}
 _mib = {}
+_stdin_q = queue.Queue()     # operators input
+
 
 DEFAULT_MIB = {
     "Example Telecommand": {},
@@ -33,7 +35,9 @@ def _now() -> float:
     return time.monotonic() - _ground_time
 
 def loadMIB(path="mib.json"):
-    """Load the Mission Information Base (telecommand definitions)."""
+    """
+    Load the Mission Information Base (telecommand definitions).
+    """
     global _mib
     try:
         with open(path) as f:
@@ -56,11 +60,13 @@ CONSOLE
 
 def readComms():
     """
-    Reads data from the communications interface.
-    This function retrieves incoming data from the communication channels and processes it accordingly.
+    This function retrieves incoming data from standard in and processes it accordingly.
+    Return a line typed by the operator, or None. Non-blocking.
     """
-    # Implementation for reading communications goes here
-    pass
+    try:
+        return _stdin_q.get_nowait().strip() or None
+    except queue.Empty:
+        return None
 
 def checkComms():
     """
