@@ -1,6 +1,7 @@
 import time
 import json
 import queue
+import sys
 
 """
 GLOBALS
@@ -68,13 +69,20 @@ def readComms():
     except queue.Empty:
         return None
 
-def checkComms():
-    """
-    Checks the status of the communications interface.
-    This function verifies if the communication channels are active and functioning properly.
-    """
-    # Implementation for checking communications goes here
-    pass
+def checkComms(line):
+   """
+   Validate operator input against the MIB. Returns the command name or None.
+   Typing exit / quit / q shuts the ground station down.
+   """
+   if line.lower() in EXIT_WORDS: #lower makes lowercase
+        print("[GND] shutdown")
+        sys.exit(0)
+
+   if line in _mib:
+        return line
+
+   print(f"[ERR] unknown command '{line}'")
+   return None
 
 def createTC():
     """
