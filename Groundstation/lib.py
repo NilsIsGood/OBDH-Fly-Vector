@@ -14,6 +14,7 @@ _pending = {}            # seq_count -> (command name, time sent)
 _uplink_q = queue.Queue()    # ground -> platform 
 _downlink_q = queue.Queue()  # platform -> ground
 _stdin_q = queue.Queue()     # operators input
+RESPONSE_TIMEOUT_S = 5.0     # 5 secs timeout
 
 
 DEFAULT_MIB = {
@@ -93,6 +94,7 @@ def createTC(name):
    """
    Build a telecommand packet from its MIB definition.
    """
+   seq = handleSequenceCount() 
    
 
 def timestampCommand(telecommand):
@@ -117,14 +119,15 @@ def displayResponse(response):
 UPLINK
 """
 
-def sendTelecommand(telecommand):
+def sendTelecommand(tc):
     """
     3.1.0 Send Telecommand.
     Sends a telecommand over the communications interface.
     This function encodes the telecommand and transmits it to the spacecraft.
     """
-    # Implementation for sending a telecommand goes here
-    pass
+    _uplink_q.put(tc["packet"])
+    _pending[tc["seq"]] = (tc["name"], _now()) 
+    displayResponse(f"TC sent: {tc["name"]} (seq {tc["seq"]})")
  
  
 def handleSequenceCount():
@@ -137,14 +140,17 @@ def handleSequenceCount():
     pass
  
  
-def monitorForResponse(telecommand, timeout=None):
+def monitorForResponse():
     """
     3.3.0 Monitor for Response.
     Monitors the downlink for the response to a sent telecommand.
     This function matches acknowledgements to the sequence count and flags a timeout if none arrives.
     """
-    # Implementation for monitoring for a response goes here
-    pass
+    now = _now()
+    for seq, (name, t) in list(_pending.items()):
+        if now - t > RESPONSE_TIMEOUT_S:
+            displayResponse(f"TIMEOUT: no ack for '{name}' (seq {seq})")
+            del _pending[seq]
 
 """
 DOWNLINK
