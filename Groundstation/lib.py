@@ -8,10 +8,9 @@ def startGroundTime():
     Starts the ground time for the ground station.
     This function initializes the ground time and sets it to the current system time.
     """
-    import time
-    global ground_time
-    ground_time = time.time()
-    pass
+    global _ground_time, _wall_time
+    _ground_time = time.monotonic()
+    _wall_time = time.time()
 
 def loadMIB():
     """
