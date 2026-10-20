@@ -184,8 +184,10 @@ def handleSequenceCount():
     Manages the telecommand sequence counter.
     This function assigns the next sequence count and handles rollover and resynchronisation.
     """
-    # Implementation for handling the sequence count goes here
-    pass
+    global _seq_count
+    seq = _seq_count
+    _seq_count = (_seq_count + 1) % 65536  # Roll over at 16-bit max back to 0
+    return seq
  
  
 def monitorForResponse():
