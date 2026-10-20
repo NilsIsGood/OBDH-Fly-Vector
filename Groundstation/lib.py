@@ -1,10 +1,11 @@
 import time
 import json
 
-EXIT_WORDS = {"exit", "quit", "q"}
+
 """
 GLOBALS
 """
+EXIT_WORDS = {"exit", "quit", "q"}
 _mib = {}
 
 DEFAULT_MIB = {
