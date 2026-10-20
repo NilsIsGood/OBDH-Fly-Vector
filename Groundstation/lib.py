@@ -37,7 +37,7 @@ def startGroundTime():
 
 def _now() -> float:
     """
-    Monotonic ground elapsed time (s); immune to wall-clock jumps.
+    Monotonic ground elapsed time (s)
     """
     return time.monotonic() - _ground_time
 
