@@ -1,0 +1,6 @@
+# --- COMMAND DEFINITIONS (TC) ---
+# TC_Name | Target | Argument | Description
+
+
+# --- TELEMENTRY DEFINITIONS (TM) ---
+# TM_Name | Type | Format/Units | Description
