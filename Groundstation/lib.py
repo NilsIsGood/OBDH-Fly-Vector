@@ -84,13 +84,11 @@ def checkComms(line):
    print(f"[ERR] unknown command '{line}'")
    return None
 
-def createTC():
-    """
-    Creates a Telecommand (TC) for the ground station.
-    This function generates a new telecommand based on the specified parameters and prepares it for transmission.
-    """
-    # Implementation for creating a telecommand goes here
-    pass
+def createTC(name):
+   """
+   Build a telecommand packet from its MIB definition.
+   """
+   
 
 def timestampCommand(telecommand):
     """
