@@ -1,0 +1,36 @@
+# R7023E OBDH model - build all three processes.
+# Because typing 'gcc' repeatedly is a great way to get carpal tunnel.
+#
+#   make          - build pf, pl and gnd_stub (brings them into existence)
+#   make demo     - build, then run the scripted demonstration
+#   make clean    - remove binaries and generated logs (hide the evidence)
+
+CC      = gcc
+# -std=c11: Modern-ish C. -Wall -Wextra: The compiler will judge me, and it should.
+CFLAGS  = -std=c11 -Wall -Wextra -O2 -D_DEFAULT_SOURCE
+TARGETS = pf pl gnd_stub
+
+# Default target: build all the things
+all: $(TARGETS)
+
+# Compile the Platform OBC. Relies on shared obdh logic.
+pf: pf.c obdh.c obdh.h
+	$(CC) $(CFLAGS) -o $@ pf.c obdh.c
+
+# Compile the Payload ICU. A simpler, more innocent program . . . at least easier for my sleep deprived vibe-coding mind to follow.
+pl: pl.c obdh.c obdh.h
+	$(CC) $(CFLAGS) -o $@ pl.c obdh.c
+
+# Compile the ground stub.
+gnd_stub: gnd_stub.c obdh.c obdh.h
+	$(CC) $(CFLAGS) -o $@ gnd_stub.c obdh.c
+
+# The "please just work" button
+demo: all
+	./demo.sh
+
+# Clean up my mess because I'm a responsible adult... allegedly 
+clean:
+	rm -f $(TARGETS) pl_images.log gnd_tm.log
+
+.PHONY: all demo clean
