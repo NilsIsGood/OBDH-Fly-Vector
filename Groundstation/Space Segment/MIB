@@ -1,0 +1,35 @@
+# Fly Vector - Mission Information Base
+# Loaded by the ground station at startup. Derived from ICD v0.1.
+# Blank lines and lines starting with # are ignored.
+
+# --- COMMAND DEFINITIONS (TC) ---
+# TC_Name | Target | Argument | Description
+PING       | PF | -           | Link check, no onboard effect
+SET_OBT    | PF | hh:mm:ss    | Set the onboard clock from ground time
+SET_MODE   | PF | SAFE,TARGET | Command a platform mode change
+GET_HK     | PF | -           | Request one extra housekeeping frame
+PL_POWER   | PL | ON,OFF      | Switch the payload on or off
+TAKE_IMAGE | PL | -           | Command the payload to generate data
+
+# --- TELEMETRY DEFINITIONS (TM) ---
+# TM_Name | Type | Format/Units | Description
+ACK | REPLY  | ref;stage;cmd          | Telecommand accepted, or execution complete
+NAK | REPLY  | ref;reason;detail      | Telecommand refused at validation
+HK  | CYCLIC | key=value;key=value    | Housekeeping, every 2 seconds
+EV  | EVENT  | event=NAME;extra       | Reported when something changes on board
+
+# --- REJECTION REASON CODES ---
+# Code | Description
+BAD_FORMAT      | Line malformed, too long, or illegal characters
+SEQ_ERROR       | Sequence number missing, unparseable, or duplicated
+UNKNOWN_CMD     | Command name not in this catalogue
+BAD_ARG         | Wrong argument count, or a value outside its set
+TIMETAG_INVALID | Time tag is neither NOW nor a valid hh:mm:ss
+TIMETAG_OVERDUE | Time tag is in the past relative to onboard time
+OBT_NOT_SET     | Time-tagged command sent before SET_OBT
+WRONG_MODE      | Platform mode forbids this command
+PL_OFF          | Payload operation requested while powered off
+PL_BUSY         | Capture requested while a capture is running
+PL_LINK_DOWN    | Payload control unit is not connected
+QUEUE_FULL      | Time-tag queue is at its 16 entry capacity
+IN_TRANSITION   | A mode change is already in progress
